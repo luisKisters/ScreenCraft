@@ -221,8 +221,10 @@ export async function beginRecording() {
       startDrawLoop();
     }
     $("hudCam").classList.add("on");
+    document.body.classList.add("hudcam");
   } else {
     $("hudCam").classList.remove("on");
+    document.body.classList.remove("hudcam");
   }
 
   state.phase = "recording";
@@ -231,7 +233,7 @@ export async function beginRecording() {
   document.body.classList.add("hud");
   $("hudLeft").style.display = "flex";
   $("btnStop").style.display = "block";
-  await resizeBar(cam ? 380 : 340, 60);
+  await resizeBar(...hudSize(!!cam));
   await placeHudNearArea();
   const t0 = performance.now();
   const paint = () => {
@@ -252,7 +254,7 @@ async function placeHudNearArea() {
   if (state.mode !== "area" || !state.area) return;
   try {
     const a = state.area;
-    const w = 340, h = 60, gap = 10;
+    const [w, h] = hudSize(!!cameraRec), gap = 10;
     const srcs = state.sources?.displays || [];
     const d = srcs.find((x) => x.id === state.displayId) || srcs[0];
     const top = d ? d.y : 0, bottom = d ? d.y + d.height : 1080;
@@ -277,12 +279,17 @@ function stopRecorder(rec) {
 }
 
 /** Stop the camera and microphone recorders and flush their chunks. Never throws. */
+/** Recording HUD window size: compact, or tall enough for the big camera preview on the left
+ *  (the discard confirmation hides the preview, so it stays compact). */
+const hudSize = (cam, confirm = false) => (confirm ? [420, 60] : cam ? [520, 188] : [340, 60]);
+
 async function stopSideRecorders() {
   try {
     if (cameraRec) {
       await stopRecorder(cameraRec.rec);
       if (!cameraRec.shared) cameraRec.stream.getTracks().forEach((t) => t.stop());
       $("hudCam").classList.remove("on");
+      document.body.classList.remove("hudcam");
       await writeChain;
     }
   } catch {}
@@ -342,7 +349,7 @@ export async function discardRecording() {
   clearInterval(timerHandle);
   document.body.classList.remove("confirm");
   $("timer").textContent = "Discarding…";
-  await resizeBar(cameraRec ? 380 : 340, 60);
+  await resizeBar(...hudSize(!!cameraRec));
   await stopSideRecorders();
   try {
     const dir = await invoke("stop_recording", { cameraStartedUnixMs: null, micStartedUnixMs: null });
@@ -360,11 +367,11 @@ export async function discardRecording() {
 export async function askDiscard() {
   if (state.phase !== "recording") return;
   document.body.classList.add("confirm");
-  await resizeBar(420, 60);
+  await resizeBar(...hudSize(!!cameraRec, true));
 }
 export async function cancelDiscard() {
   document.body.classList.remove("confirm");
-  await resizeBar(cameraRec ? 380 : 340, 60);
+  await resizeBar(...hudSize(!!cameraRec));
 }
 
 async function resetUI() {

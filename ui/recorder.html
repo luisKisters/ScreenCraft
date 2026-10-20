@@ -36,14 +36,16 @@
   #camPreview, #hudCam { display: none; width: 26px; height: 26px; border-radius: 7px; object-fit: cover; transform: scaleX(-1); background: #000; flex: none; }
   .opt.live #camPreview { display: block; }
   .opt.live > svg { display: none; }
-  #hudCam.on { display: block; width: 34px; height: 34px; border-radius: 9px; }
+  #hudCam.on { display: block; width: 168px; height: 168px; border-radius: 14px; margin-right: 4px; }
+  /* recording with a camera: the bar grows to fit a big preview on the left */
+  body.hud.hudcam:not(.confirm) .bar { height: 180px; }
   #optQuality { max-width: 138px; }
   #optFolder { padding: 0 10px; max-width: none; }
   .menu { max-height: 500px; }
   .opt .meter { position: absolute; left: 8px; right: 8px; bottom: 3px; height: 2px; border-radius: 1px; background: rgba(255,255,255,.1); overflow: hidden; display: none; }
   .opt.on .meter { display: block; }
   .meter b { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #3ddc97 0%, #3ddc97 65%, #f6c453 80%, #ff6b6b 100%); transition: width .05s linear; }
-  .meter.hud { position: static; display: none; width: 34px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.14); overflow: hidden; margin-left: 2px; }
+  .meter.hud { flex: none; position: static; display: none; width: 34px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.14); overflow: hidden; margin-left: 2px; }
   body.hud .meter.hud { display: block; }
   .menu button .chk { display: inline-block; width: 16px; color: var(--accent-2); }
   .chev2 { width: 11px !important; height: 11px !important; }
@@ -96,7 +98,7 @@
   body.hud .hudbox { display: flex; }
   body.countdown .bar > :not(.hudbox) { display: none !important; }
   body.countdown .hudbox { display: flex; }
-  .pulse { width: 11px; height: 11px; border-radius: 3px; background: var(--danger); animation: pulse 1.2s infinite; }
+  .pulse { flex: none; width: 11px; height: 11px; border-radius: 3px; background: var(--danger); animation: pulse 1.2s infinite; }
   @keyframes pulse { 50% { opacity: .35; } }
   .time { font-variant-numeric: tabular-nums; font-size: 18px; font-weight: 600; letter-spacing: .02em; }
   .trash { width: 40px; height: 40px; border-radius: 9px; border: 1px solid var(--line-2); display: none; place-items: center; color: #b9c4d9; flex: none; }
@@ -150,7 +152,7 @@
     </div>
     <button class="rec" id="btnRec"><span class="dot"></span><span id="recLabel">Record</span></button>
     <div class="hudbox">
-      <div id="hudLeft" style="display:flex;align-items:center;gap:10px"><canvas id="hudCam" width="72" height="72"></canvas><div class="pulse"></div><div class="time" id="timer">0:00</div><i class="meter hud" id="hudMic" title="Microphone"><b></b></i><i class="meter hud sys" id="hudSys" title="System audio"><b></b></i></div>
+      <div id="hudLeft" style="display:flex;align-items:center;gap:10px"><canvas id="hudCam" width="336" height="336"></canvas><div class="pulse"></div><div class="time" id="timer">0:00</div><i class="meter hud" id="hudMic" title="Microphone"><b></b></i><i class="meter hud sys" id="hudSys" title="System audio"><b></b></i></div>
       <div class="count" id="count" style="display:none"></div>
       <button class="trash" id="btnTrash" title="Discard this recording" aria-label="Discard this recording"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
       <button class="stop" id="btnStop">Stop</button>
